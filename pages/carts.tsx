@@ -45,7 +45,8 @@ export default function CartsPage() {
   }
 
   return (
-    <div className="space-y-6 px-4 sm:px-6 lg:px-8">
+    <div className="space-y-6 px-2 sm:px-4 lg:px-8">
+      {/* Search and stats */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex-1 w-full max-w-xs">
           <Input
@@ -55,68 +56,73 @@ export default function CartsPage() {
             className="bg-input border-border"
           />
         </div>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground mt-2 sm:mt-0">
           Total: {filteredCarts.length} | Pending: {filteredCarts.filter((c) => c.status === "pending").length}
         </div>
       </div>
 
+      {/* Carts table */}
       <Card className="bg-card border-border overflow-hidden">
         <CardHeader>
           <CardTitle className="text-foreground">Carts & Orders</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px] text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">User Name</th>
-                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Product</th>
-                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Plan</th>
-                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Total Price</th>
-                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Date</th>
-                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Actions</th>
+        <CardContent className="overflow-x-auto">
+          <table className="w-full min-w-[600px] text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">User Name</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Product</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Plan</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Total Price</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Date</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Status</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCarts.map((cart) => (
+                <tr key={cart.id} className="border-b border-border hover:bg-sidebar">
+                  <td className="py-2 sm:py-3 px-2 sm:px-4 text-foreground">{cart.userName}</td>
+                  <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.product}</td>
+                  <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.plan}</td>
+                  <td className="py-2 sm:py-3 px-2 sm:px-4 text-foreground font-semibold">${cart.totalPrice}</td>
+                  <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.addedAt.toLocaleDateString()}</td>
+                  <td className="py-2 sm:py-3 px-2 sm:px-4">
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
+                        cart.status === "processed"
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-yellow-500/20 text-yellow-400"
+                      }`}
+                    >
+                      {cart.status === "processed" ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                      {cart.status.charAt(0).toUpperCase() + cart.status.slice(1)}
+                    </span>
+                  </td>
+                  <td className="py-2 sm:py-3 px-2 sm:px-4">
+                    <button
+                      onClick={() => handleViewDetails(cart)}
+                      className="p-2 hover:bg-sidebar rounded transition-colors"
+                    >
+                      <Eye size={16} className="text-accent" />
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredCarts.map((cart) => (
-                  <tr key={cart.id} className="border-b border-border hover:bg-sidebar">
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-foreground">{cart.userName}</td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.product}</td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.plan}</td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-foreground font-semibold">${cart.totalPrice}</td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.addedAt.toLocaleDateString()}</td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
-                          cart.status === "processed"
-                            ? "bg-green-500/20 text-green-400"
-                            : "bg-yellow-500/20 text-yellow-400"
-                        }`}
-                      >
-                        {cart.status === "processed" ? <CheckCircle size={14} /> : <XCircle size={14} />}
-                        {cart.status.charAt(0).toUpperCase() + cart.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4">
-                      <button
-                        onClick={() => handleViewDetails(cart)}
-                        className="p-2 hover:bg-sidebar rounded transition-colors"
-                      >
-                        <Eye size={16} className="text-accent" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </CardContent>
       </Card>
 
-      <ModalDialog isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Order Details">
+      {/* Modal */}
+      <ModalDialog
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Order Details"
+        className="sm:max-w-md w-full"
+      >
         {selectedCart && (
-          <div className="w-full sm:max-w-md space-y-4">
+          <div className="w-full space-y-4">
             <div>
               <p className="text-muted-foreground text-sm">User Name</p>
               <p className="text-foreground font-semibold">{selectedCart.userName}</p>
