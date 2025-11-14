@@ -4,7 +4,6 @@ import { useState, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import ModalDialog from "@/components/modal-dialog"
 import { dummyCarts } from "@/lib/dummy-data"
 import { Eye, CheckCircle, XCircle } from "lucide-react"
 
@@ -18,6 +17,37 @@ interface Cart {
   status: "pending" | "processed"
 }
 
+// Mobile-ready modal component
+function ModalDialog({
+  isOpen,
+  onClose,
+  title,
+  children,
+  className = "",
+}: {
+  isOpen: boolean
+  onClose: () => void
+  title?: string
+  children: React.ReactNode
+  className?: string
+}) {
+  if (!isOpen) return null
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6"
+      onClick={onClose} // click outside to close
+    >
+      <div
+        className={`bg-card rounded-md shadow-lg w-full ${className} p-4 sm:p-6`}
+        onClick={(e) => e.stopPropagation()} // stop click bubbling
+      >
+        {title && <h2 className="text-lg font-semibold text-foreground mb-4">{title}</h2>}
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export default function CartsPage() {
   const [carts, setCarts] = useState<Cart[]>(dummyCarts)
   const [searchTerm, setSearchTerm] = useState("")
@@ -29,9 +59,9 @@ export default function CartsPage() {
       carts.filter(
         (c) =>
           c.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          c.product.toLowerCase().includes(searchTerm.toLowerCase()),
+          c.product.toLowerCase().includes(searchTerm.toLowerCase())
       ),
-    [carts, searchTerm],
+    [carts, searchTerm]
   )
 
   const handleViewDetails = (cart: Cart) => {
@@ -57,12 +87,13 @@ export default function CartsPage() {
           />
         </div>
         <div className="text-sm text-muted-foreground mt-2 sm:mt-0">
-          Total: {filteredCarts.length} | Pending: {filteredCarts.filter((c) => c.status === "pending").length}
+          Total: {filteredCarts.length} | Pending:{" "}
+          {filteredCarts.filter((c) => c.status === "pending").length}
         </div>
       </div>
 
       {/* Carts table */}
-      <Card className="bg-card border-border overflow-hidden">
+      <Card className="bg-card border-border overflow-hidden relative z-0">
         <CardHeader>
           <CardTitle className="text-foreground">Carts & Orders</CardTitle>
         </CardHeader>
@@ -102,9 +133,9 @@ export default function CartsPage() {
                   <td className="py-2 sm:py-3 px-2 sm:px-4">
                     <button
                       onClick={() => handleViewDetails(cart)}
-                      className="p-2 hover:bg-sidebar rounded transition-colors"
+                      className="p-3 sm:p-2 hover:bg-sidebar rounded transition-colors"
                     >
-                      <Eye size={16} className="text-accent" />
+                      <Eye size={20} className="text-accent" />
                     </button>
                   </td>
                 </tr>
@@ -115,12 +146,7 @@ export default function CartsPage() {
       </Card>
 
       {/* Modal */}
-      <ModalDialog
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Order Details"
-        className="sm:max-w-md w-full"
-      >
+      <ModalDialog isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Order Details" className="sm:max-w-md w-full">
         {selectedCart && (
           <div className="w-full space-y-4">
             <div>
