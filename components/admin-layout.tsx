@@ -31,10 +31,17 @@ export default function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-background">
+      {/* Sidebar: Desktop always visible, mobile toggle handled inside Sidebar component */}
       <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+
       <div className="flex-1 flex flex-col">
+        {/* TopBar with responsive paddings */}
         <TopBar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-        <main className="flex-1 overflow-auto bg-background p-6">{renderPage()}</main>
+
+        {/* Main content */}
+        <main className="flex-1 overflow-auto bg-background p-4 md:p-6 lg:p-8">
+          {renderPage()}
+        </main>
       </div>
     </div>
   )

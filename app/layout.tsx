@@ -20,7 +20,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`font-sans antialiased`}>
+  <body className="font-sans antialiased min-h-screen w-full overflow-x-hidden">
+
         {children}
         <Analytics />
       </body>

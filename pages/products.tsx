@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useMemo } from "react"
 import { dummyProducts, dummyInstallmentPlans, dummyBrands } from "@/lib/dummy-data"
 import { Plus, Edit2, Trash2, X } from "lucide-react"
@@ -36,11 +35,13 @@ export default function ProductsPage() {
   })
   const [imageInput, setImageInput] = useState("")
 
+  // Filter products based on search
   const filteredProducts = useMemo(
     () => products.filter((p) => p.name.toLowerCase().includes(searchTerm.toLowerCase())),
-    [products, searchTerm],
+    [products, searchTerm]
   )
 
+  // Open modal for add/edit
   const handleOpenModal = (product?: Product) => {
     if (product) {
       setEditingProduct(product)
@@ -67,35 +68,31 @@ export default function ProductsPage() {
     setIsModalOpen(true)
   }
 
+  // Add image from URL input
   const handleAddImage = () => {
     if (imageInput.trim() && !formData.images.includes(imageInput)) {
-      setFormData({
-        ...formData,
-        images: [...formData.images, imageInput],
-      })
+      setFormData({ ...formData, images: [...formData.images, imageInput] })
       setImageInput("")
     }
   }
 
+  // Handle image file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (files) {
-      Array.from(files).forEach((file) => {
-        const reader = new FileReader()
-        reader.onload = (event) => {
-          const imageData = event.target?.result as string
-          if (!formData.images.includes(imageData)) {
-            setFormData({
-              ...formData,
-              images: [...formData.images, imageData],
-            })
-          }
+    if (!files) return
+    Array.from(files).forEach((file) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        const imageData = reader.result as string
+        if (!formData.images.includes(imageData)) {
+          setFormData((prev) => ({ ...prev, images: [...prev.images, imageData] }))
         }
-        reader.readAsDataURL(file)
-      })
-    }
+      }
+      reader.readAsDataURL(file)
+    })
   }
 
+  // Remove image by index
   const handleRemoveImage = (index: number) => {
     setFormData({
       ...formData,
@@ -103,6 +100,7 @@ export default function ProductsPage() {
     })
   }
 
+  // Toggle installment plan selection
   const handleToggleInstallmentPlan = (planId: string) => {
     setFormData({
       ...formData,
@@ -112,6 +110,7 @@ export default function ProductsPage() {
     })
   }
 
+  // Save product (add or update)
   const handleSaveProduct = () => {
     if (!formData.name || !formData.price || !formData.category || !formData.brand || formData.images.length === 0) {
       alert("Please fill all fields and add at least one image")
@@ -131,8 +130,8 @@ export default function ProductsPage() {
                 images: formData.images,
                 availableInstallmentPlanIds: formData.availableInstallmentPlanIds,
               }
-            : p,
-        ),
+            : p
+        )
       )
     } else {
       const newProduct: Product = {
@@ -159,12 +158,14 @@ export default function ProductsPage() {
     })
   }
 
+  // Delete product
   const handleDeleteProduct = (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       setProducts(products.filter((p) => p.id !== id))
     }
   }
 
+  // Get installment plan names for product table
   const getProductInstallmentPlans = (planIds: string[]) => {
     return dummyInstallmentPlans
       .filter((plan) => planIds.includes(plan.id))
@@ -174,6 +175,7 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Search & Add */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 max-w-xs">
           <Input
@@ -189,6 +191,7 @@ export default function ProductsPage() {
         </Button>
       </div>
 
+      {/* Products Table */}
       <Card className="bg-card border-border overflow-hidden">
         <CardHeader>
           <CardTitle className="text-foreground">Products ({filteredProducts.length})</CardTitle>
@@ -219,7 +222,9 @@ export default function ProductsPage() {
                     </td>
                     <td className="py-3 px-4 text-muted-foreground">{product.brand}</td>
                     <td className="py-3 px-4 text-muted-foreground">{product.category}</td>
-                    <td className="py-3 px-4 text-foreground font-medium">PKR {product.price}</td>
+                    <td className="py-3 px-4 text-foreground font-medium">
+                      PKR {product.price.toLocaleString()}
+                    </td>
                     <td className="py-3 px-4 text-muted-foreground text-xs">
                       {getProductInstallmentPlans(product.availableInstallmentPlanIds) || "No plans"}
                     </td>
@@ -247,12 +252,14 @@ export default function ProductsPage() {
         </CardContent>
       </Card>
 
+      {/* Modal */}
       <ModalDialog
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={editingProduct ? "Edit Product" : "Add Product"}
       >
         <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+          {/* Product Name */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Product Name *</label>
             <Input
@@ -264,7 +271,8 @@ export default function ProductsPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Brand & Category */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Brand *</label>
               <select
@@ -280,7 +288,6 @@ export default function ProductsPage() {
                 ))}
               </select>
             </div>
-
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Category *</label>
               <Input
@@ -293,6 +300,7 @@ export default function ProductsPage() {
             </div>
           </div>
 
+          {/* Price */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Price (PKR) *</label>
             <Input
@@ -304,6 +312,7 @@ export default function ProductsPage() {
             />
           </div>
 
+          {/* Images */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Product Images *</label>
             <div className="space-y-2">
@@ -322,17 +331,8 @@ export default function ProductsPage() {
               </div>
               <label className="flex items-center justify-center w-full p-4 border-2 border-dashed border-border rounded-lg hover:bg-sidebar cursor-pointer transition-colors">
                 <div className="text-center">
-                  <svg
-                    className="mx-auto h-8 w-8 text-muted-foreground mb-2"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 48 48"
-                  >
-                    <path
-                      d="M28 8H12a4 4 0 00-4 4v20a4 4 0 004 4h24a4 4 0 004-4V20m-14-12l-4-4m0 0l-4 4m4-4v16"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
+                  <svg className="mx-auto h-8 w-8 text-muted-foreground mb-2" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                    <path d="M28 8H12a4 4 0 00-4 4v20a4 4 0 004 4h24a4 4 0 004-4V20m-14-12l-4-4m0 0l-4 4m4-4v16" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                   <p className="text-xs text-muted-foreground">Click to upload or drag images</p>
                 </div>
@@ -346,11 +346,7 @@ export default function ProductsPage() {
                 <div className="grid grid-cols-4 gap-2">
                   {formData.images.map((image, index) => (
                     <div key={index} className="relative group">
-                      <img
-                        src={image || "/placeholder.svg"}
-                        alt={`Product ${index + 1}`}
-                        className="w-full h-20 rounded object-cover border border-border"
-                      />
+                      <img src={image || "/placeholder.svg"} alt={`Product ${index + 1}`} className="w-full h-20 rounded object-cover border border-border" />
                       <button
                         onClick={() => handleRemoveImage(index)}
                         className="absolute top-1 right-1 p-1 bg-destructive rounded opacity-0 group-hover:opacity-100 transition-opacity"
@@ -364,6 +360,7 @@ export default function ProductsPage() {
             )}
           </div>
 
+          {/* Installment Plans */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Available Installment Plans *</label>
             <div className="bg-sidebar p-3 rounded-lg space-y-2">
@@ -377,20 +374,16 @@ export default function ProductsPage() {
                   />
                   <div>
                     <p className="text-sm font-medium text-foreground">{plan.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {plan.months} months • {plan.interestRate}% interest
-                    </p>
+                    <p className="text-xs text-muted-foreground">{plan.months} months • {plan.interestRate}% interest</p>
                   </div>
                 </label>
               ))}
             </div>
           </div>
 
+          {/* Modal Actions */}
           <div className="flex gap-2 pt-4 border-t border-border">
-            <Button
-              onClick={handleSaveProduct}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
-            >
+            <Button onClick={handleSaveProduct} className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
               {editingProduct ? "Update Product" : "Add Product"}
             </Button>
             <Button onClick={() => setIsModalOpen(false)} className="flex-1 bg-muted hover:bg-border text-foreground">

@@ -45,9 +45,9 @@ export default function CartsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex-1 max-w-xs">
+    <div className="space-y-6 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1 w-full max-w-xs">
           <Input
             placeholder="Search by name or product..."
             value={searchTerm}
@@ -66,29 +66,29 @@ export default function CartsPage() {
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[600px] text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-muted-foreground">User Name</th>
-                  <th className="text-left py-3 px-4 text-muted-foreground">Product</th>
-                  <th className="text-left py-3 px-4 text-muted-foreground">Plan</th>
-                  <th className="text-left py-3 px-4 text-muted-foreground">Total Price</th>
-                  <th className="text-left py-3 px-4 text-muted-foreground">Date</th>
-                  <th className="text-left py-3 px-4 text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-4 text-muted-foreground">Actions</th>
+                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">User Name</th>
+                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Product</th>
+                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Plan</th>
+                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Total Price</th>
+                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Date</th>
+                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Status</th>
+                  <th className="text-left py-3 px-2 sm:px-4 text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredCarts.map((cart) => (
                   <tr key={cart.id} className="border-b border-border hover:bg-sidebar">
-                    <td className="py-3 px-4 text-foreground">{cart.userName}</td>
-                    <td className="py-3 px-4 text-muted-foreground">{cart.product}</td>
-                    <td className="py-3 px-4 text-muted-foreground">{cart.plan}</td>
-                    <td className="py-3 px-4 text-foreground font-semibold">${cart.totalPrice}</td>
-                    <td className="py-3 px-4 text-muted-foreground">{cart.addedAt.toLocaleDateString()}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-foreground">{cart.userName}</td>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.product}</td>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.plan}</td>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-foreground font-semibold">${cart.totalPrice}</td>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-muted-foreground">{cart.addedAt.toLocaleDateString()}</td>
+                    <td className="py-2 sm:py-3 px-2 sm:px-4">
                       <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                        className={`inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
                           cart.status === "processed"
                             ? "bg-green-500/20 text-green-400"
                             : "bg-yellow-500/20 text-yellow-400"
@@ -98,7 +98,7 @@ export default function CartsPage() {
                         {cart.status.charAt(0).toUpperCase() + cart.status.slice(1)}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-2 sm:py-3 px-2 sm:px-4">
                       <button
                         onClick={() => handleViewDetails(cart)}
                         className="p-2 hover:bg-sidebar rounded transition-colors"
@@ -116,7 +116,7 @@ export default function CartsPage() {
 
       <ModalDialog isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Order Details">
         {selectedCart && (
-          <div className="space-y-4">
+          <div className="w-full sm:max-w-md space-y-4">
             <div>
               <p className="text-muted-foreground text-sm">User Name</p>
               <p className="text-foreground font-semibold">{selectedCart.userName}</p>
@@ -137,7 +137,7 @@ export default function CartsPage() {
               <p className="text-muted-foreground text-sm">Added At</p>
               <p className="text-foreground font-semibold">{selectedCart.addedAt.toLocaleString()}</p>
             </div>
-            <div className="flex gap-2 pt-4">
+            <div className="flex flex-col sm:flex-row gap-2 pt-4">
               {selectedCart.status === "pending" && (
                 <Button
                   onClick={() => handleUpdateStatus(selectedCart.id, "processed")}
@@ -146,7 +146,10 @@ export default function CartsPage() {
                   Mark as Processed
                 </Button>
               )}
-              <Button onClick={() => setIsModalOpen(false)} className="flex-1 bg-muted hover:bg-border text-foreground">
+              <Button
+                onClick={() => setIsModalOpen(false)}
+                className="flex-1 bg-muted hover:bg-border text-foreground"
+              >
                 Close
               </Button>
             </div>

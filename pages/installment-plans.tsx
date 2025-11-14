@@ -81,6 +81,7 @@ export default function InstallmentPlansPage() {
 
   return (
     <div className="space-y-6">
+      {/* Add Plan Button */}
       <div className="flex justify-end">
         <Button onClick={() => handleOpenModal()} className="bg-primary hover:bg-accent text-primary-foreground gap-2">
           <Plus size={20} />
@@ -88,7 +89,8 @@ export default function InstallmentPlansPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Plans Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {plans.map((plan) => (
           <Card key={plan.id} className="bg-card border-border">
             <CardHeader>
@@ -103,7 +105,7 @@ export default function InstallmentPlansPage() {
                 <p className="text-muted-foreground text-sm">Interest Rate</p>
                 <p className="text-lg font-semibold text-foreground">{plan.interestRate}%</p>
               </div>
-              <div className="flex gap-2 pt-4">
+              <div className="flex gap-2 pt-4 flex-col sm:flex-row">
                 <Button
                   onClick={() => handleOpenModal(plan)}
                   className="flex-1 bg-primary hover:bg-accent text-primary-foreground"
@@ -122,6 +124,7 @@ export default function InstallmentPlansPage() {
         ))}
       </div>
 
+      {/* Modal for Add/Edit Plan */}
       <ModalDialog
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -158,7 +161,7 @@ export default function InstallmentPlansPage() {
               className="bg-input border-border"
             />
           </div>
-          <div className="flex gap-2 pt-4">
+          <div className="flex gap-2 pt-4 flex-col sm:flex-row">
             <Button onClick={handleSavePlan} className="flex-1 bg-primary hover:bg-accent text-primary-foreground">
               {editingPlan ? "Update" : "Add"}
             </Button>

@@ -24,21 +24,24 @@ export default function QueriesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedQuery, setSelectedQuery] = useState<Query | null>(null)
 
+  // Filter queries based on search input
   const filteredQueries = useMemo(
     () =>
       queries.filter(
         (q) =>
           q.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          q.email.toLowerCase().includes(searchTerm.toLowerCase()),
+          q.email.toLowerCase().includes(searchTerm.toLowerCase())
       ),
-    [queries, searchTerm],
+    [queries, searchTerm]
   )
 
+  // Open modal and set selected query
   const handleViewDetails = (query: Query) => {
     setSelectedQuery(query)
     setIsModalOpen(true)
   }
 
+  // Update query status
   const handleUpdateStatus = (id: string, newStatus: "open" | "resolved") => {
     setQueries(queries.map((q) => (q.id === id ? { ...q, status: newStatus } : q)))
     setIsModalOpen(false)
@@ -46,6 +49,7 @@ export default function QueriesPage() {
 
   return (
     <div className="space-y-6">
+      {/* Search and summary */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 max-w-xs">
           <Input
@@ -60,6 +64,7 @@ export default function QueriesPage() {
         </div>
       </div>
 
+      {/* Queries Table */}
       <Card className="bg-card border-border overflow-hidden">
         <CardHeader>
           <CardTitle className="text-foreground">Customer Queries</CardTitle>
@@ -112,6 +117,7 @@ export default function QueriesPage() {
         </CardContent>
       </Card>
 
+      {/* Query Details Modal */}
       <ModalDialog isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Query Details">
         {selectedQuery && (
           <div className="space-y-4">
@@ -135,13 +141,16 @@ export default function QueriesPage() {
               <p className="text-muted-foreground text-sm">Submitted At</p>
               <p className="text-foreground font-semibold">{selectedQuery.submittedAt.toLocaleString()}</p>
             </div>
+
             <div className="flex gap-2 pt-4">
-              <Button
-                onClick={() => handleUpdateStatus(selectedQuery.id, "resolved")}
-                className="flex-1 bg-primary hover:bg-accent text-primary-foreground"
-              >
-                Mark as Resolved
-              </Button>
+              {selectedQuery.status === "open" && (
+                <Button
+                  onClick={() => handleUpdateStatus(selectedQuery.id, "resolved")}
+                  className="flex-1 bg-primary hover:bg-accent text-primary-foreground"
+                >
+                  Mark as Resolved
+                </Button>
+              )}
               <Button onClick={() => setIsModalOpen(false)} className="flex-1 bg-muted hover:bg-border text-foreground">
                 Close
               </Button>

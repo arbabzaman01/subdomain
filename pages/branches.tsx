@@ -85,15 +85,20 @@ export default function BranchesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4 sm:px-6 lg:px-8">
+      {/* Add Branch Button */}
       <div className="flex justify-end">
-        <Button onClick={() => handleOpenModal()} className="bg-primary hover:bg-accent text-primary-foreground gap-2">
+        <Button
+          onClick={() => handleOpenModal()}
+          className="bg-primary hover:bg-accent text-primary-foreground gap-2"
+        >
           <Plus size={20} />
           Add Branch
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Branch Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {branches.map((branch) => (
           <Card key={branch.id} className="bg-card border-border">
             <CardHeader>
@@ -111,7 +116,7 @@ export default function BranchesPage() {
                 <p className="text-muted-foreground text-sm">Phone</p>
                 <p className="text-foreground">{branch.phone}</p>
               </div>
-              <div className="flex gap-2 pt-4">
+              <div className="flex flex-col sm:flex-row gap-2 pt-4">
                 <Button
                   onClick={() => handleOpenModal(branch)}
                   className="flex-1 bg-primary hover:bg-accent text-primary-foreground"
@@ -130,12 +135,13 @@ export default function BranchesPage() {
         ))}
       </div>
 
+      {/* Modal */}
       <ModalDialog
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={editingBranch ? "Edit Branch" : "Add Branch"}
       >
-        <div className="space-y-4">
+        <div className="w-full sm:max-w-lg space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Branch Name</label>
             <Input
@@ -176,11 +182,17 @@ export default function BranchesPage() {
               className="bg-input border-border"
             />
           </div>
-          <div className="flex gap-2 pt-4">
-            <Button onClick={handleSaveBranch} className="flex-1 bg-primary hover:bg-accent text-primary-foreground">
+          <div className="flex flex-col sm:flex-row gap-2 pt-4">
+            <Button
+              onClick={handleSaveBranch}
+              className="flex-1 bg-primary hover:bg-accent text-primary-foreground"
+            >
               {editingBranch ? "Update" : "Add"}
             </Button>
-            <Button onClick={() => setIsModalOpen(false)} className="flex-1 bg-muted hover:bg-border text-foreground">
+            <Button
+              onClick={() => setIsModalOpen(false)}
+              className="flex-1 bg-muted hover:bg-border text-foreground"
+            >
               Cancel
             </Button>
           </div>

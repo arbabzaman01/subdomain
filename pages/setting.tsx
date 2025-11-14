@@ -19,28 +19,33 @@ export default function SettingsPage() {
   })
   const [message, setMessage] = useState({ type: "", text: "" })
 
-  const handleProfileUpdate = () => {
-    setMessage({ type: "success", text: "Profile updated successfully!" })
+  const showMessage = (type: "success" | "error", text: string) => {
+    setMessage({ type, text })
     setTimeout(() => setMessage({ type: "", text: "" }), 3000)
+  }
+
+  const handleProfileUpdate = () => {
+    // Ideally, here you would call an API to update the profile
+    showMessage("success", "Profile updated successfully!")
   }
 
   const handlePasswordUpdate = () => {
     if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-      setMessage({ type: "error", text: "Please fill all password fields" })
+      showMessage("error", "Please fill all password fields")
       return
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setMessage({ type: "error", text: "New passwords do not match" })
+      showMessage("error", "New passwords do not match")
       return
     }
 
-    if (updatePassword(passwordData.oldPassword, passwordData.newPassword)) {
-      setMessage({ type: "success", text: "Password updated successfully!" })
+    const success = updatePassword(passwordData.oldPassword, passwordData.newPassword)
+    if (success) {
+      showMessage("success", "Password updated successfully!")
       setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" })
-      setTimeout(() => setMessage({ type: "", text: "" }), 3000)
     } else {
-      setMessage({ type: "error", text: "Failed to update password" })
+      showMessage("error", "Failed to update password")
     }
   }
 
@@ -112,11 +117,13 @@ export default function SettingsPage() {
               className="bg-input border-border"
             />
           </div>
+
           {message.text && (
             <p className={`text-sm ${message.type === "success" ? "text-green-400" : "text-red-400"}`}>
               {message.text}
             </p>
           )}
+
           <Button onClick={handlePasswordUpdate} className="bg-primary hover:bg-accent text-primary-foreground">
             Update Password
           </Button>
